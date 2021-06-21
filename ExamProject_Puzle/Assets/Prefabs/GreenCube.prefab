@@ -109,9 +109,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22e35fa146ced264982c14815af122b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _keyOne: 119
-  _keyTwo: 115
   _moveDirection: {x: 0, y: 0, z: 0.75}
+  _joystickSensitivity: 0.75
+  _useVertical: 1
 --- !u!54 &6543489410431534105
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -3,38 +3,56 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private KeyCode _keyOne;
-    [SerializeField] private KeyCode _keyTwo;
+    private Joystick _joystick;
     [SerializeField] private Vector3 _moveDirection;
+    [SerializeField] private float _joystickSensitivity = 1f;
+    [SerializeField] private bool _useVertical;
+
+    private void Start()
+    {
+        _joystick = FindObjectOfType<Joystick>();
+    }
 
     private void FixedUpdate()
     {
-        if (Input.GetKey(_keyOne))
+        float axis = _useVertical ? _joystick.Vertical : _joystick.Horizontal;
+        
+        if (axis >= 0.1)
         {
-            GetComponent<Rigidbody>().velocity += _moveDirection;
+            GetComponent<Rigidbody>().velocity -= _moveDirection * (axis * _joystickSensitivity);
         }
-        else if (Input.GetKey(_keyTwo))
+        else if (axis <= -0.1)
         {
-            GetComponent<Rigidbody>().velocity -= _moveDirection;
+            GetComponent<Rigidbody>().velocity += _moveDirection * -(axis * _joystickSensitivity);
         }
-        else if (Input.GetKey(KeyCode.R))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-        else if (Input.GetKey(KeyCode.Q))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void NextScene()
+    {
+        if(SceneManager.GetActiveScene().buildIndex == 5) SceneManager.LoadScene(0);
+        else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (this.CompareTag("Player") && other.CompareTag("Finish"))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            if (SceneManager.GetActiveScene().buildIndex == 5) SceneManager.LoadScene(0);
+            else SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
         else if(this.CompareTag("Cube") && other.CompareTag("Cube"))
         {
